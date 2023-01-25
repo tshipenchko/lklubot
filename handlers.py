@@ -95,8 +95,8 @@ async def cmd_nick(message: types.Message) -> None:
 
 @router.errors()
 async def errors_handler(update: types.Update, error: Exception) -> None:
-    match update.event:
-        case types.Message():
-            await update.message.reply(f"Error: {error}")
-        case types.CallbackQuery():
-            await update.callback_query.answer(f"Error: {error}", show_alert=True)
+    event = getattr(update, update.event_type)
+    if isinstance(event, types.Message):
+        await event.reply(f"Error: {error}")
+    elif isinstance(event, types.CallbackQuery):
+        await event.answer(f"Error: {error}", show_alert=True)
