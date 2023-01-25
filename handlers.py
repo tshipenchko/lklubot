@@ -1,5 +1,6 @@
 from aiogram import Router, types, Bot
 from aiogram.filters import CommandStart, Command, CommandObject
+from aiogram.types.error_event import ErrorEvent
 
 from filters import IsChatAdmin, CanPromoteMembers, ReplyRequired
 
@@ -94,9 +95,12 @@ async def cmd_nick(message: types.Message) -> None:
 
 
 @router.errors()
-async def errors_handler(update: types.Update, error: Exception) -> None:
-    event = getattr(update, update.event_type)
+async def errors_handler(error: ErrorEvent) -> None:
+    event = getattr(error.update, error.update.event_type)
+    text = f"Error: \n{error.exception}"
+    if len(text) > 200:
+        text = f"{text[:200]}..."
     if isinstance(event, types.Message):
-        await event.reply(f"Error: {error}")
+        await event.reply(text)
     elif isinstance(event, types.CallbackQuery):
-        await event.answer(f"Error: {error}", show_alert=True)
+        await event.answer(text)
