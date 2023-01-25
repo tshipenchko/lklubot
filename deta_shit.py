@@ -13,8 +13,9 @@ def generate_app(bot: Bot, dp: Dispatcher, expected_secret: str) -> FastAPI:
             secret: str = Header(alias="X-Telegram-Bot-Api-Secret-Token"),
     ) -> dict[str, Any]:
         if secret != expected_secret:
-            return {"status": "error", "message": "Invalid secret token"}
+            return {"ok": False, "message": "Invalid secret token"}
 
-        return await dp.feed_update(bot, update=update)
+        await dp.feed_update(bot=bot, update=update)
+        return {"ok": True}
 
     return app
