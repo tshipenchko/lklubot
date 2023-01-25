@@ -7,7 +7,7 @@ from aiogram import Bot, Dispatcher, types
 def generate_app(bot: Bot, dp: Dispatcher, expected_secret: str) -> FastAPI:
     app = FastAPI()
 
-    @app.get("/webhook")
+    @app.post("/webhook")
     async def route_webhook(
             update: types.Update,
             secret: str = Header(alias="X-Telegram-Bot-Api-Secret-Token"),
