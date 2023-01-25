@@ -15,12 +15,5 @@ dp.include_router(router)
 logging.basicConfig(level=logging.INFO)
 
 
-if getenv("DETA_RUNTIME"):
-    from deta_shit import generate_app
-    app = generate_app(
-        bot,
-        dp,
-        getenv("WEBHOOK_SECRET"),
-    )
-else:
+if __name__ == '__main__':
     dp.run_polling(bot)
