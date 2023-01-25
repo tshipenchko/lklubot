@@ -1,18 +1,18 @@
 from abc import ABC
-from typing import Any
+from typing import Any, Union
 
 from aiogram import Bot, types
 from aiogram.filters import Filter
 
 
 class IsChatAdmin(Filter, ABC):
-    async def __call__(self, event: types.Message | types.CallbackQuery, bot: Bot) -> bool:
+    async def __call__(self, event: Union[types.Message, types.CallbackQuery], bot: Bot) -> bool:
         member = await bot.get_chat_member(event.chat.id, event.from_user.id)
         return isinstance(member, types.ChatMemberAdministrator)
 
 
 class CanPromoteMembers(Filter, ABC):
-    async def __call__(self, event: types.Message | types.CallbackQuery, bot: Bot) -> bool:
+    async def __call__(self, event: Union[types.Message, types.CallbackQuery], bot: Bot) -> bool:
         member = await bot.get_chat_member(event.chat.id, event.from_user.id)
         return (
                 isinstance(member, types.ChatMemberAdministrator)
@@ -26,7 +26,7 @@ class ReplyRequired(Filter, ABC):
         self.error_message = error_message
         self.notify = notify
 
-    async def __call__(self, event: types.Message, bot: Bot) -> bool | dict[str, Any]:
+    async def __call__(self, event: types.Message, bot: Bot) -> Union[bool, dict[str, Any]]:
         if event.reply_to_message:
             return {
                 "reply": event.reply_to_message,
